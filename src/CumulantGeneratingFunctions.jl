@@ -48,6 +48,7 @@ end
 
 function expfd0_taylor(x)
     # (exp(x) - 1) / x = 1 + (1/2)*x + (1/3)*x^2/2! + (1/4)*x^3/3! + ...
+    # TODO make this play more nicely with AD
     evalpoly(x, (1, 1/2, 1/6, 1/24, 1/120))
 end
 
