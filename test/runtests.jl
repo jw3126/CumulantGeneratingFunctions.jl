@@ -26,6 +26,13 @@ import ForwardDiff
         mk(Exponential(1),               Any[0.9, -1, -100f0, -1e6]),
         mk(Exponential(0.91),               Any[0.9, -1, -100f0, -1e6]),
         mk(Exponential(10),           Any[0.08, -1, -100f0, -1e6]),
+        mk(Gamma(1,1),               Any[0.9, -1, -100f0, -1e6]),
+        mk(Gamma(10,1),               Any[0.9, -1, -100f0, -1e6]),
+        mk(Gamma(0.2, 10),           Any[0.08, -1, -100f0, -1e6]),
+        mk(Laplace(1, 1),           Any[0.99, -0.99, 1f-2, -1f-5]),
+        mk(Chisq(1),           Any[0.49, -1, -100, -1f6]),
+        mk(Chisq(3),           Any[0.49, -1, -100, -1f6]),
+        mk(NoncentralChisq(3,2),           Any[0.49, -1, -100, -1f6]),
                    ]
         dist = item.dist
         κ₀ = cgf(dist, 0)

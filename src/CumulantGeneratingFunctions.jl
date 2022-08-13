@@ -67,7 +67,29 @@ function cgf(d::Normal, t)
 end
 function cgf(d::Exponential, t)
     μ = mean(d)
+    cgf_Exponential(μ,t)
+end
+function cgf_Exponential(μ, t)
     -log1p(-t*μ)
 end
-
+function cgf(d::Gamma, t)
+    α,θ = params(d)
+    α*cgf_Exponential(θ,t)
 end
+function cgf(d::Laplace, t)
+    μ,θ = params(d)
+    t*μ - log1m((θ*t)^2)
+end
+function cgf_Chisq(ν,t)
+    -ν/2*log1m(2*t)
+end
+function cgf(d::Chisq, t)
+    ν, = params(d)
+    cgf_Chisq(ν,t)
+end
+function cgf(d::NoncentralChisq, t)
+    ν, λ = params(d)
+    λ*t/(1-2t) + cgf_Chisq(ν,t)
+end
+
+end#module
