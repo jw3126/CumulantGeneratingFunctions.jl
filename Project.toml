@@ -9,7 +9,10 @@ ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LogExpFunctions = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
 
 [compat]
-julia = "1"
+Distributions = "0.25.66"
+julia = "1.6"
+LogExpFunctions = "0.3.17"
+ForwardDiff = "0.10.32"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
