@@ -1,5 +1,73 @@
 module CumulantGeneratingFunctions
 
-# Write your package code here.
+using Distributions
+using LogExpFunctions
+
+export cgf
+
+"""
+    cgf(distribution, t)
+
+Evaluate the [cumulant-generating-function](https://en.wikipedia.org/wiki/Cumulant) of `distribution` at `t`.
+Mathematically the cumulant-generating-function is the logarithm of the [moment-generating-function](https://en.wikipedia.org/wiki/Moment-generating_function):
+`cgf = (log∘mf)`. In practice the right hand side may have overflow or accuracy issues, that is why
+we provide a dedicated `cgf` implementation here.
+"""
+function cgf end
+
+log1m(x) = log1p(-x)
+
+function cfg_Bernoulli(p,t)
+    # log(1-p+p*exp(t))
+    logaddexp(log1m(p), t+log(p))
+end
+function cgf(d::Bernoulli, t)
+    p, = params(d)
+    cfg_Bernoulli(p,t)
+end
+function cgf(d::Binomial, t)
+    n,p = params(d)
+    n*cfg_Bernoulli(p,t)
+end
+function cfg_Geometric(p, t)
+    # log(p / (1 - (1-p) * exp(t)))
+    log(p) - logsubexp(0, t + log1m(p))
+end
+function cgf(d::Geometric, t)
+    p, = params(d)
+    cfg_Geometric(p,t)
+end
+function cgf(d::NegativeBinomial, t)
+    r,p = params(d)
+    r*cfg_Geometric(p,t)
+end
+function cgf(d::Poisson, t)
+    λ = mean(d)
+    λ*(exp(t)-1)
+end
+
+function expfd0_taylor(x)
+    # (exp(x) - 1) / x = 1 + (1/2)*x + (1/3)*x^2/2! + (1/4)*x^3/3! + ...
+    evalpoly(x, (1, 1/2, 1/6, 1/24, 1/120))
+end
+
+function cgf(d::Uniform, t)
+    a,b = params(d)
+    # log((exp(t*b) - exp(t*a))/ (t*(b-a)))
+    x = t*(b-a)
+    if abs(x) < sqrt(eps(float(one(x))))
+        t*a + log(expfd0_taylor(x))
+    else
+        logsubexp(t*b, t*a) - log(abs(x))
+    end
+end
+function cgf(d::Normal, t)
+    μ,σ = params(d)
+    t*μ + (σ*t)^2/2
+end
+function cgf(d::Exponential, t)
+    μ = mean(d)
+    -log1p(-t*μ)
+end
 
 end
