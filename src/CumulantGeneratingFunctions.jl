@@ -17,29 +17,33 @@ function cgf end
 
 log1m(x) = log1p(-x)
 
-function cfg_Bernoulli(p,t)
+function cgf(d::Dirac, t)
+    t*d.value
+end
+
+function cgf_Bernoulli(p,t)
     # log(1-p+p*exp(t))
     logaddexp(log1m(p), t+log(p))
 end
 function cgf(d::Bernoulli, t)
     p, = params(d)
-    cfg_Bernoulli(p,t)
+    cgf_Bernoulli(p,t)
 end
 function cgf(d::Binomial, t)
     n,p = params(d)
-    n*cfg_Bernoulli(p,t)
+    n*cgf_Bernoulli(p,t)
 end
-function cfg_Geometric(p, t)
+function cgf_Geometric(p, t)
     # log(p / (1 - (1-p) * exp(t)))
     log(p) - logsubexp(0, t + log1m(p))
 end
 function cgf(d::Geometric, t)
     p, = params(d)
-    cfg_Geometric(p,t)
+    cgf_Geometric(p,t)
 end
 function cgf(d::NegativeBinomial, t)
     r,p = params(d)
-    r*cfg_Geometric(p,t)
+    r*cgf_Geometric(p,t)
 end
 function cgf(d::Poisson, t)
     λ = mean(d)
@@ -65,6 +69,9 @@ end
 function cgf(d::Normal, t)
     μ,σ = params(d)
     t*μ + (σ*t)^2/2
+end
+function cgf(d::MvNormal, t)
+
 end
 function cgf(d::Exponential, t)
     μ = mean(d)

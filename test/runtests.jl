@@ -8,12 +8,14 @@ import ForwardDiff
     mk(dist, ts; compare_logmf=true) = (;dist=dist, ts=ts, compare_logmf)
 
     @testset "$(item.dist)" for item in [
+        mk(Dirac(13),               Any[1, 1f-4, 1e10, 10, -4]),
+        mk(Dirac(-1f2),             Any[1, 1f-4, 1e10, 10,-4]),
         mk(Bernoulli(0.5),           Any[1f0, -1f0,1e6, -1e6]),
         mk(Bernoulli(0.1),           Any[1f0, -1f0,1e6, -1e6]),
-        mk(Geometric(0.1),           Any[1f0, 1e6]           ),
-        mk(Geometric(0.5),           Any[1f0, 1e6]           ),
         mk(Binomial(10,0.1),         Any[1f0, -1f0,1e6, -1e6]),
         mk(Binomial(100,1f-3),       Any[1f0, -1f0,1e6, -1e6]),
+        mk(Geometric(0.1),           Any[1f0, 1e6]           ),
+        mk(Geometric(0.5),           Any[1f0, 1e6]           ),
         mk(Geometric(0.5),           Any[1f0, 1e6]           ),
         mk(NegativeBinomial(10,0.5), Any[-1f0, -200.0,-1e6]  , compare_logmf=false),
         mk(NegativeBinomial(3,0.1), Any[-1f0, -200.0,-1e6]  , compare_logmf=false),
@@ -36,7 +38,7 @@ import ForwardDiff
                    ]
         dist = item.dist
         κ₀ = cgf(dist, 0)
-        @test κ₀ ≈ 0 atol=2*eps(one(κ₀))
+        @test κ₀ ≈ 0 atol=2*eps(one(float(κ₀)))
         κ₁ = d(Base.Fix1(cgf, dist))(0)
         @test κ₁ ≈ mean(dist)
         κ₂ = d(d(Base.Fix1(cgf, dist)))(0)
